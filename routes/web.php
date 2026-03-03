@@ -1,27 +1,24 @@
 <?php
 
-use App\Http\Controllers\AboutController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Route Dashboard bawaan Breeze
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-// TUGAS PERTEMUAN 2: Route ke Halaman About
-// Pastikan AboutController sudah dibuat dengan 'php artisan make:controller AboutController'
-Route::get('/about', [AboutController::class, 'index'])
-    ->middleware(['auth'])
-    ->name('about');
+Route::get('/about', function () {
+    return view('about');
+})->middleware(['auth', 'verified'])->name('about');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
 require __DIR__.'/auth.php';
